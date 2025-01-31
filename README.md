@@ -1,2 +1,2 @@
 # PeFood
- Full stack delivery system
+API for a delivery system
