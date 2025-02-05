@@ -1,6 +1,6 @@
 from beanie import Document
 from typing import List
-from pydantic import Field
+from pydantic import Field, field_validator
 from src.model.entities.address import Address
 from src.model.entities.payment_format import PaymentFormat
 from src.model.entities.user import User
@@ -8,15 +8,29 @@ from src.model.entities.product import Product
 
 
 class ProductItem(Document):
-    quantity: int = Field(..., title="Quantidade", ge=1)
-    product: Product = Field(..., title="Produto")
+    quantity: int = Field(..., title="Quantity", ge=1)
+    product: Product = Field(..., title="Product")
+
+    @field_validator("quantity")
+    def validate_quantity(cls, quantity: int) -> int:
+        if quantity > 1000:
+            raise ValueError(
+                "The quantity of a single product cannot exceed 1000 units"
+            )
+        return quantity
 
 
 class Bag(Document):
-    user: User = Field(..., title="Usuário")
-    products: List[ProductItem] = Field(..., title="Lista de Produtos")
-    address: Address = Field(..., title="Endereço de Entrega")
-    payment_format: PaymentFormat = Field(..., title="Forma de Pagamento")
+    user: User = Field(..., title="User")
+    products: List[ProductItem] = Field(..., title="Product List")
+    address: Address = Field(..., title="Delivery Address")
+    payment_format: PaymentFormat = Field(..., title="Payment Method")
+
+    @field_validator("products")
+    def validate_products(cls, products: List[ProductItem]) -> List[ProductItem]:
+        if not products:
+            raise ValueError("The product list cannot be empty")
+        return products
 
     class Settings:
         name = "bags"
@@ -29,59 +43,59 @@ class Bag(Document):
                     "password": "123456",
                     "addresses": [
                         {
-                            "street": "Avenida Paulista",
+                            "street": "Paulista Avenue",
                             "number": 1000,
                             "city": "São Paulo",
                             "neighborhood": "Brás",
                             "zip_code": 12345,
-                            "complement": "Apto 101",
-                            "reference": "Perto da loja",
+                            "complement": "Apt 101",
+                            "reference": "Near the store",
                         }
                     ],
-                    "tell": "11999999999",
-                    "formas_de_pagamento": [
-                        {"id": 1, "name": "Dinheiro"},
-                        {"id": 2, "name": "Cartão de crédito"},
-                        {"id": 3, "name": "Cartão de débito"},
+                    "phone": "11999999999",
+                    "payment_formats": [
+                        {"id": 1, "name": "Cash"},
+                        {"id": 2, "name": "Credit Card"},
+                        {"id": 3, "name": "Debit Card"},
                     ],
                 },
                 "products": [
                     {
                         "quantity": 2,
                         "product": {
-                            "name": "Produto X",
-                            "description": "Descrição do produto X",
+                            "name": "Product X",
+                            "description": "Description of product X",
                             "price": 19.99,
                             "images": [
                                 "https://example.com/image1.jpg",
                                 "https://example.com/image2.jpg",
                             ],
-                            "categories": ["Categoria A", "Categoria B"],
+                            "categories": ["Category A", "Category B"],
                         },
                     },
                     {
                         "quantity": 1,
                         "product": {
-                            "name": "Produto Y",
-                            "description": "Descrição do produto Y",
+                            "name": "Product Y",
+                            "description": "Description of product Y",
                             "price": 9.99,
                             "images": [
                                 "https://example.com/image3.jpg",
                                 "https://example.com/image4.jpg",
                             ],
-                            "categories": ["Categoria C", "Categoria D"],
+                            "categories": ["Category C", "Category D"],
                         },
                     },
                 ],
                 "address": {
-                    "street": "Avenida Paulista",
+                    "street": "Paulista Avenue",
                     "number": 1000,
                     "city": "São Paulo",
                     "neighborhood": "Brás",
                     "zip_code": 12345,
-                    "complement": "Apto 101",
-                    "reference": "Perto da loja",
+                    "complement": "Apt 101",
+                    "reference": "Near the store",
                 },
-                "payment_format": {"id": 1, "name": "Dinheiro"},
+                "payment_format": {"id": 1, "name": "Cash"},
             }
         }

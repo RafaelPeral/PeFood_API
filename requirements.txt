@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 asyncio==3.4.3
+bcrypt==4.2.1
 beanie==1.29.0
 blinker==1.8.2
 cfgv==3.4.0
