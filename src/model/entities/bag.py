@@ -1,18 +1,26 @@
 from beanie import Document
-from typing import List, Dict
-from model.entities.address import Address
-from model.entities.payment_format import PaymentFormat
-from model.entities.user import User
-from model.entities.product import Product
+from typing import List
+from pydantic import Field
+from src.model.entities.address import Address
+from src.model.entities.payment_format import PaymentFormat
+from src.model.entities.user import User
+from src.model.entities.product import Product
+
+
+class ProductItem(Document):
+    quantity: int = Field(..., title="Quantidade", ge=1)
+    product: Product = Field(..., title="Produto")
 
 
 class Bag(Document):
-    user: User
-    products: List[Dict["quantity":int, "product":Product]]  # noqa: F821
-    address: Address
-    payment_format: PaymentFormat
+    user: User = Field(..., title="Usuário")
+    products: List[ProductItem] = Field(..., title="Lista de Produtos")
+    address: Address = Field(..., title="Endereço de Entrega")
+    payment_format: PaymentFormat = Field(..., title="Forma de Pagamento")
 
-    class Config:
+    class Settings:
+        name = "bags"
+        alias_generator = str.lower
         schema_extra = {
             "example": {
                 "user": {
@@ -23,8 +31,8 @@ class Bag(Document):
                         {
                             "street": "Avenida Paulista",
                             "number": 1000,
-                            "city": "São Paulo",
-                            "neighborhood": "Brás",
+                            "city": "São Paulo",
+                            "neighborhood": "Brás",
                             "zip_code": 12345,
                             "complement": "Apto 101",
                             "reference": "Perto da loja",
@@ -33,17 +41,16 @@ class Bag(Document):
                     "tell": "11999999999",
                     "formas_de_pagamento": [
                         {"id": 1, "name": "Dinheiro"},
-                        {"id": 2, "name": "Cartão de crédito"},
-                        {"id": 3, "name": "Cartão de débito"},
+                        {"id": 2, "name": "Cartão de crédito"},
+                        {"id": 3, "name": "Cartão de débito"},
                     ],
                 },
                 "products": [
                     {
                         "quantity": 2,
                         "product": {
-                            "id": 1,
                             "name": "Produto X",
-                            "description": "Descrição do produto X",
+                            "description": "Descrição do produto X",
                             "price": 19.99,
                             "images": [
                                 "https://example.com/image1.jpg",
@@ -55,9 +62,8 @@ class Bag(Document):
                     {
                         "quantity": 1,
                         "product": {
-                            "id": 2,
                             "name": "Produto Y",
-                            "description": "Descrição do produto Y",
+                            "description": "Descrição do produto Y",
                             "price": 9.99,
                             "images": [
                                 "https://example.com/image3.jpg",
@@ -70,12 +76,12 @@ class Bag(Document):
                 "address": {
                     "street": "Avenida Paulista",
                     "number": 1000,
-                    "city": "São Paulo",
-                    "neighborhood": "Brás",
+                    "city": "São Paulo",
+                    "neighborhood": "Brás",
                     "zip_code": 12345,
                     "complement": "Apto 101",
                     "reference": "Perto da loja",
                 },
-                "payment_format": [{"id": 1, "name": "Dinheiro"}],
+                "payment_format": {"id": 1, "name": "Dinheiro"},
             }
         }

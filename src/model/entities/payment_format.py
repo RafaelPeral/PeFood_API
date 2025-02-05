@@ -1,9 +1,15 @@
 from beanie import Document
+from pydantic import Field
 
 
 class PaymentFormat(Document):
-    id: int
-    name: str
+    name: str = Field(..., title="Nome da Forma de Pagamento", max_length=50)
 
-    class Config:
-        schema_extra = {"example": {"id": 1, "name": "Dinheiro"}}
+    class Settings:
+        name = "payment_formats"
+        alias_generator = str.lower
+        schema_extra = {
+            "example": {
+                "name": "Dinheiro",
+            }
+        }
