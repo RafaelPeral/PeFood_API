@@ -7,7 +7,9 @@ from src.model.entities.payment_format import PaymentFormat
 
 class User(Document):
     name: str = Field(..., title="Nome do usuário")
-    email: EmailStr = Field(..., unique=True, title="E-mail do usuário")
+    email: EmailStr = Field(
+        ..., json_schema_extra={"unique": True}, title="E-mail do usuário"
+    )
     password: str = Field(..., title="Senha do usuário")
     addresses: List[Address] = Field(default_factory=list, title="Lista de endereços")
     tell: str = Field(..., title="Número de telefone")
