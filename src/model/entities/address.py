@@ -8,7 +8,7 @@ class Address(Document):
     number: int = Field(..., title="Number", ge=1)
     city: str = Field(..., title="City", max_length=50)
     neighborhood: str = Field(..., title="Neighborhood", max_length=50)
-    zip_code: int = Field(..., title="ZIP Code", ge=10000, le=99999999)
+    zip_code: int = Field(..., title="ZIP Code", ge=1, le=99999999)
     complement: str = Field(default="", title="Complement", max_length=100)
     reference: str = Field(default="", title="Reference", max_length=100)
 

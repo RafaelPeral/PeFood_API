@@ -7,7 +7,7 @@ from pydantic import Field, field_validator
 class Product(Document):
     name: str = Field(..., title="Product Name", max_length=100)
     description: str = Field(..., title="Description", max_length=500)
-    price: float = Field(..., gt=0, title="Price")
+    price: float = Field(..., title="Price")
     images: List[str] = Field(default_factory=list, title="Product Images")
     categories: List[str] = Field(default_factory=list, title="Categories")
 
@@ -27,7 +27,7 @@ class Product(Document):
 
     @field_validator("price")
     def validate_price(cls, price: float) -> float:
-        if price <= 0:
+        if price < 0:
             raise ValueError("The price must be greater than zero")
         return round(price, 2)
 

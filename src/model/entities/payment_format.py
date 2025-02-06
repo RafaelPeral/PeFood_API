@@ -8,6 +8,7 @@ class PaymentFormat(Document):
 
     @field_validator("name")
     def validate_name(cls, name: str) -> str:
+        name = name.strip()
         if len(name) < 3:
             raise ValueError(
                 "The payment method name must be at least 3 characters long"
@@ -16,7 +17,7 @@ class PaymentFormat(Document):
             raise ValueError(
                 "The payment method name cannot contain numbers or special characters"
             )
-        return name.strip()
+        return name
 
     class Settings:
         name = "payment_formats"
